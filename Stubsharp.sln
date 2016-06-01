@@ -3,14 +3,14 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25123.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{F3A89D7D-394A-4FAB-B64F-B2B63E74A191}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{057E4D7A-C502-43F6-82EA-10876683C9FF}"
 	ProjectSection(SolutionItems) = preProject
 		global.json = global.json
 	EndProjectSection
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Stubsharp", "src\Stubsharp.xproj", "{AF8E3ED2-E6A4-4E02-9ADC-21AA130214E7}"
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Stubsharp", "src\Stubsharp\Stubsharp.xproj", "{AF8E3ED2-E6A4-4E02-9ADC-21AA130214E7}"
+EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Stubsharp.Tests", "test\Stubsharp.Tests\Stubsharp.Tests.xproj", "{68287B02-192A-40CF-9757-C22EBF2B625F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -22,11 +22,12 @@ Global
 		{AF8E3ED2-E6A4-4E02-9ADC-21AA130214E7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AF8E3ED2-E6A4-4E02-9ADC-21AA130214E7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AF8E3ED2-E6A4-4E02-9ADC-21AA130214E7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{68287B02-192A-40CF-9757-C22EBF2B625F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{68287B02-192A-40CF-9757-C22EBF2B625F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{68287B02-192A-40CF-9757-C22EBF2B625F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{68287B02-192A-40CF-9757-C22EBF2B625F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{AF8E3ED2-E6A4-4E02-9ADC-21AA130214E7} = {F3A89D7D-394A-4FAB-B64F-B2B63E74A191}
 	EndGlobalSection
 EndGlobal

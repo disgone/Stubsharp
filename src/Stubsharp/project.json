@@ -1,8 +1,9 @@
 {
   "version": "1.0.0-*",
+  "description": "A C# wapper for the StubHub.com API",
   "authors": [ "Shaun Smith" ],
   "packOptions": {
-    "owners":  [ "Shaun Smith" ],
+    "owners": [ "Shaun Smith" ],
     "summary": "A C# wapper for the StubHub.com API"
   },
   "dependencies": {
@@ -10,9 +11,7 @@
     "Newtonsoft.Json": "8.0.3"
   },
   "frameworks": {
-    "net45": {
-      "buildOptions": { "define": [ "NET45" ] }
-    },
+    "net46": { },
     "netstandard1.5": {
       "imports": "dnxcore50"
     }
