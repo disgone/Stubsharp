@@ -3,7 +3,7 @@
     internal sealed class StubhubEndpoint
     {
         public static readonly StubhubEndpoint Login = new StubhubEndpoint("Login", "login", false);
-        public static readonly StubhubEndpoint EventSearch = new StubhubEndpoint("SearchEvents", "search/catalog/events/v3");
+        public static readonly StubhubEndpoint EventSearch = new StubhubEndpoint("EventSearch", "search/catalog/events/v3");
         public static readonly StubhubEndpoint InventorySearch = new StubhubEndpoint("InventorySearch", "search/inventory/v2");
 
         public readonly string Name;
