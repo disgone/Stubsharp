@@ -13,5 +13,10 @@
             Name = name;
             Domain = domain;
         }
+
+        public override string ToString()
+        {
+            return Name;
+        }
     }
 }

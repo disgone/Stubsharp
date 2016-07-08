@@ -13,7 +13,7 @@ namespace Stubsharp
 {
     public class StubsharpClient : IDisposable
     {
-        public IHttpClientFactory ClientFactory { get; set; }
+        public IHttpClientFactory HttpClientFactory { get; set; }
 
         public StubsharpClient(string apiKey, string apiSecret, StubhubEnvironment environment)
         {
@@ -26,7 +26,7 @@ namespace Stubsharp
             _apiSecret = apiSecret;
             _environment = environment ?? StubhubEnvironment.Sandbox;
 
-            ClientFactory = new HttpClientFactory();
+            HttpClientFactory = new HttpClientFactory();
         }
 
         public bool IsAuthenticated()
@@ -45,7 +45,7 @@ namespace Stubsharp
 
         public async Task<StubsharpAuthentication> Login(LoginRequest loginRequest)
         {
-            var client = ClientFactory.GetClient(_environment);
+            var client = HttpClientFactory.GetClient(_environment);
             IEnumerable<KeyValuePair<string, string>> data = new List<KeyValuePair<string, string>>
             {
                 new KeyValuePair<string, string>("grant_type", "password"),
@@ -77,10 +77,13 @@ namespace Stubsharp
 
         public async Task<EventSearchResponse> SearchEvents(EventSearchRequest eventSearchRequest)
         {
+            if(eventSearchRequest == null)
+                throw new ArgumentNullException(nameof(eventSearchRequest));
+
             if (StubhubEndpoint.EventSearch.RequiresAuthorization && !IsAuthenticated())
                 throw new InvalidOperationException($"{StubhubEndpoint.EventSearch.Name} requires authentication");
 
-            var client = ClientFactory.GetAuthenticatedClient(_environment, _authentication.AccessToken);
+            var client = HttpClientFactory.GetAuthenticatedClient(_environment, _authentication.AccessToken);
 
             string endpoint = StubhubEndpoint.EventSearch.Url + "?" + eventSearchRequest.ToQueryString();
             var response = await client.GetAsync(endpoint);
@@ -93,7 +96,19 @@ namespace Stubsharp
 
         public void Dispose()
         {
-            ClientFactory.Dispose();
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        private void Dispose(bool disposing)
+        {
+            if (_disposed) return;
+
+            if (disposing)
+            {
+                HttpClientFactory.Dispose();
+            }
+            _disposed = true;
         }
 
         private readonly StubhubEnvironment _environment;
@@ -103,5 +118,7 @@ namespace Stubsharp
         private readonly string _apiKey;
 
         private readonly string _apiSecret;
+
+        private bool _disposed;
     }
 }

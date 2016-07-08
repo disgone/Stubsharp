@@ -32,6 +32,12 @@ namespace Stubsharp
             return _authedClient;
         }
 
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
         protected HttpClient CreateClientInstance(StubhubEnvironment environment)
         {
             var baseUri = new Uri($"https://{environment.Domain}/");
@@ -44,12 +50,21 @@ namespace Stubsharp
             return client;
         }
 
+        private void Dispose(bool disposing)
+        {
+            if (_disposed) return;
+
+            if (disposing)
+            {
+                _basicClient?.Dispose();
+                _authedClient?.Dispose();
+            }
+            _disposed = true;
+        }
+
         private static HttpClient _basicClient;
         private static HttpClient _authedClient;
-        public void Dispose()
-        {
-            _basicClient?.Dispose();
-            _authedClient?.Dispose();
-        }
+        private bool _disposed;
+        
     }
 }

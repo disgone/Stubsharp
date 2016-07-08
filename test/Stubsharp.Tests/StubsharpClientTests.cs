@@ -14,6 +14,7 @@ namespace Stubsharp.Tests
         public StubsharpClient Client { get; set; }
         public string UserName { get; set; }
         public string Password { get; set; }
+        public string AuthToken { get; set; }
 
         public ClientTestFixture()
         {
@@ -32,8 +33,17 @@ namespace Stubsharp.Tests
 
             UserName = config["Stubhub:UserName"];
             Password = config["Stubhub:Password"];
+            AuthToken = config["Stubhub:AuthToken"];
 
             Client = new StubsharpClient(key, secret, env);
+        }
+
+        public void UsePreAuthorizationToken()
+        {
+            if (string.IsNullOrWhiteSpace(AuthToken))
+                throw new InvalidOperationException("No auth token found in appsettings");
+
+            Client.SetAuthenticationInformation(AuthToken, null);
         }
 
         public void Dispose()
@@ -55,11 +65,17 @@ namespace Stubsharp.Tests
         }
 
         [Fact]
+        public async void Can_Login()
+        {
+            var response = await Fixture.Client.Login(new LoginRequest(Fixture.UserName, Fixture.Password));
+        }
+
+        [Fact]
         public async void Event_Search()
         {
             if ( !Fixture.Client.IsAuthenticated() )
             {
-                await Fixture.Client.Login(new LoginRequest("vuyego@divismail.ru", "fVmicf7nuDkg"));
+                Fixture.UsePreAuthorizationToken();
             }
 
             var request = new EventSearchRequest();
@@ -67,6 +83,19 @@ namespace Stubsharp.Tests
             request.Rows = 100;
             request.State = "TX";
             request.SortBy(EventSearchSortKey.EventDate, SortDirection.Descending);
+
+            var result = await Fixture.Client.SearchEvents(request);
+        }
+
+        [Fact]
+        public async void Invoking_Endpoint_Requireming_Authorization_While_Unauthorized_Throws_Exception()
+        {
+            Assert.False(Fixture.Client.IsAuthenticated());
+
+            var request = new EventSearchRequest
+            {
+                Query = "Miami Heat"
+            };
 
             var result = await Fixture.Client.SearchEvents(request);
         }
