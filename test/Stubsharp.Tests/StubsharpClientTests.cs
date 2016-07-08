@@ -97,7 +97,7 @@ namespace Stubsharp.Tests
                 Query = "Miami Heat"
             };
 
-            var result = await Fixture.Client.SearchEvents(request);
+            var result = await Assert.ThrowsAsync<InvalidOperationException>(async () => await Fixture.Client.SearchEvents(request));
         }
     }
 }
