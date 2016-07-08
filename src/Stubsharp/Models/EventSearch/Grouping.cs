@@ -1,5 +1,3 @@
-using Stubsharp.Models.Base;
-
 namespace Stubsharp.Models.EventSearch
 {
     public class Grouping : NamedItem, IHttpResource

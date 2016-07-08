@@ -1,14 +1,19 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Stubsharp.Utility;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Stubsharp.Tests.Utility
 {
     public class TokenBuilderTests
     {
+        private ITestOutputHelper  Output { get; set; }
+
+        public TokenBuilderTests(ITestOutputHelper output)
+        {
+            Output = output;
+        }
+
         [Fact]
         public void Creates_Basic_Authorization_Token()
         {
@@ -18,6 +23,18 @@ namespace Stubsharp.Tests.Utility
             var result = TokenBuilder.CreateAuthorizationToken(key, secret);
 
             Assert.Equal("eHl6cEtOYlFPbWZCTzF2cHRmZWZKRU9BYTphYmNHU0Q3ckZrU0NZOUZDZlUwbjk1R1RkZmdVVQ==", result);
+        }
+
+        [Fact]
+        public void Given_Null_Key_Throws_Exception()
+        {
+            Assert.Throws<ArgumentNullException>(() => TokenBuilder.CreateAuthorizationToken(null, "secret"));
+        }
+
+        [Fact]
+        public void Given_Null_Secret_Throws_Exception()
+        {
+            Assert.Throws<ArgumentNullException>(() => TokenBuilder.CreateAuthorizationToken("apikey", null));
         }
     }
 }

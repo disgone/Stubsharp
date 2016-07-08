@@ -1,6 +1,6 @@
 using Newtonsoft.Json;
 
-namespace Stubsharp.Models.Base
+namespace Stubsharp.Models
 {
     public interface IHttpResource
     {

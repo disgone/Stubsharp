@@ -1,7 +1,6 @@
 using System;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
-using Stubsharp.Models.Base;
 
 namespace Stubsharp.Models.EventSearch
 {

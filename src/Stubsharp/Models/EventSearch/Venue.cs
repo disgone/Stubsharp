@@ -1,5 +1,4 @@
 using Newtonsoft.Json;
-using Stubsharp.Models.Base;
 
 namespace Stubsharp.Models.EventSearch
 {

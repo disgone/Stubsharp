@@ -1,31 +1,29 @@
 {
   "version": "1.0.0-*",
-  "description": "Stubsharp Test Class Library",
   "buildOptions": {
     "compile": [ "**/*.cs" ]
   },
-  "testRunner": "xunit",
   "dependencies": {
-    "xunit": "2.1.0",
-    "dotnet-test-xunit": "1.0.0-rc2-build10025",
-    "Stubsharp": "1.0.0-*"
+    "dotnet-test-xunit": "2.2.0-preview2-build1029",
+    "Microsoft.Extensions.Configuration.Json": "1.0.0",
+    "Stubsharp": {
+      "target": "project",
+      "version": "1.0.0-*"
+    },
+    "xunit": "2.2.0-beta2-build3300",
+    "xunit.runner.visualstudio": "2.2.0-beta2-build1149"
   },
+  "description": "Stubsharp Test Class Library",
+  "testRunner": "xunit",
   "frameworks": {
-    "net46": { },
     "netcoreapp1.0": {
       "dependencies": {
         "Microsoft.NETCore.App": {
           "type": "platform",
-          "version": "1.0.0-rc2-3002702"
+          "version": "1.0.0"
         }
-      },
-      "imports": [
-        "portable-net451+win8",
-        "dnxcore50"
-      ],
-      "buildOptions": {
-        "define": [ "NETFX_CORE" ]
       }
     }
-  }
+  },
+  "imports": [ "dnxcore50", "portable-net45+win8" ]
 }

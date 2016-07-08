@@ -1,4 +1,4 @@
-﻿namespace Stubsharp.Models.Base
+﻿namespace Stubsharp.Models
 {
     public interface IIdentifier<T>
     {
