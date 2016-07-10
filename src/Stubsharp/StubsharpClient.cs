@@ -46,6 +46,7 @@ namespace Stubsharp
         public async Task<StubsharpAuthentication> Login(LoginRequest loginRequest)
         {
             var client = HttpClientFactory.GetClient(_environment);
+
             IEnumerable<KeyValuePair<string, string>> data = new List<KeyValuePair<string, string>>
             {
                 new KeyValuePair<string, string>("grant_type", "password"),
@@ -53,10 +54,18 @@ namespace Stubsharp
                 new KeyValuePair<string, string>("password", loginRequest.Password),
                 new KeyValuePair<string, string>("scope", _environment.Name),
             };
-            HttpContent payload = new FormUrlEncodedContent(data);
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", $"{TokenBuilder.CreateAuthorizationToken(_apiKey, _apiSecret)}");
 
-            var response = await client.PostAsync(StubhubEndpoint.Login.Url, payload);
+            var request = new HttpRequestMessage(HttpMethod.Post, StubhubEndpoint.Login.Url)
+            {
+                Headers =
+                {
+                    Authorization = new AuthenticationHeaderValue("Basic",
+                            $"{TokenBuilder.CreateAuthorizationToken(_apiKey, _apiSecret)}")
+                },
+                Content = new FormUrlEncodedContent(data)
+            };
+
+            var response = await client.SendAsync(request).ConfigureAwait(false);
             string responseBody = await response.Content.ReadAsStringAsync();
 
             if (!response.IsSuccessStatusCode)
@@ -84,14 +93,17 @@ namespace Stubsharp
                 throw new InvalidOperationException($"{StubhubEndpoint.EventSearch.Name} requires authentication");
 
             var client = HttpClientFactory.GetAuthenticatedClient(_environment, _authentication.AccessToken);
-
             string endpoint = StubhubEndpoint.EventSearch.Url + "?" + eventSearchRequest.ToQueryString();
-            var response = await client.GetAsync(endpoint);
-            string responseBody = await response.Content.ReadAsStringAsync();
 
+            return await GetResult<EventSearchResponse>(endpoint, client);
+        }
+
+        protected async Task<T> GetResult<T>(string resource, HttpClient client)
+        {
+            var response = await client.GetAsync(resource).ConfigureAwait(false);
+            string responseBody = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
             response.EnsureSuccessStatusCode();
-
-            return JsonConvert.DeserializeObject<EventSearchResponse>(responseBody);
+            return JsonConvert.DeserializeObject<T>(responseBody);
         }
 
         public void Dispose()

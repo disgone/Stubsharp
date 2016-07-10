@@ -24,11 +24,13 @@ namespace Stubsharp
         /// <returns></returns>
         public HttpClient GetAuthenticatedClient(StubhubEnvironment environment, string authenticationToken)
         {
-            if (_authedClient == null)
-            {
-                _authedClient = CreateClientInstance(environment);
-                _authedClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authenticationToken);
-            }
+            if (_authedClient != null) return _authedClient;
+
+            if (string.IsNullOrWhiteSpace(authenticationToken))
+                throw new ArgumentException("Invalid authentication token", nameof(authenticationToken));
+
+            _authedClient = CreateClientInstance(environment);
+            _authedClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authenticationToken);
             return _authedClient;
         }
 
