@@ -1,4 +1,4 @@
-﻿namespace Stubsharp.Models
+﻿namespace Stubsharp.Models.Common.Response
 {
     public interface IIdentifier<T>
     {

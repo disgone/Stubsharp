@@ -1,6 +1,6 @@
 using Newtonsoft.Json;
 
-namespace Stubsharp.Models.EventSearch
+namespace Stubsharp.Models.EventSearch.Response
 {
     public class Image
     {

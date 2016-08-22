@@ -1,4 +1,4 @@
-namespace Stubsharp.Models.EventSearch
+namespace Stubsharp.Models.EventSearch.Response
 {
     public enum EventStatus
     {

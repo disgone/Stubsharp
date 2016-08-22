@@ -1,8 +1,9 @@
 using System;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using Stubsharp.Models.Common.Response;
 
-namespace Stubsharp.Models.EventSearch
+namespace Stubsharp.Models.EventSearch.Response
 {
     public class Event : IHttpResource
     {

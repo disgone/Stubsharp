@@ -1,8 +1,8 @@
 using Newtonsoft.Json;
 
-namespace Stubsharp.Models.InventorySearch
+namespace Stubsharp.Models.InventorySearch.V2.Response
 {
-    public class SectionStatistics
+    public class SectionStatistic
     {
         [JsonProperty("sectionId")]
         public int SectionId { get; set; }

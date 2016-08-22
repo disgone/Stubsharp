@@ -1,7 +1,8 @@
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
+using Stubsharp.Models.Common.Response;
 using Stubsharp.Utility;
 
-namespace Stubsharp.Models.InventorySearch
+namespace Stubsharp.Models.InventorySearch.V1.Response
 {
     public class Listing
     {
@@ -56,10 +57,10 @@ namespace Stubsharp.Models.InventorySearch
         public bool SellerOwnInd { get; set; }
 
         [JsonProperty("listingAttributeList")]
-        public object ListingAttributeList { get; set; }
+        public long[] ListingAttributeList { get; set; }
 
         [JsonProperty("listingAttributeCategoryList")]
-        public object ListingAttributeCategoryList { get; set; }
+        public long[] ListingAttributeCategoryList { get; set; }
 
         [JsonProperty("faceValue")]
         public Currency FaceValue { get; set; }

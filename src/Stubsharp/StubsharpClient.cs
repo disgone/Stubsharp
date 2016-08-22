@@ -6,7 +6,11 @@ using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using Stubsharp.Models.EventSearch;
+using Stubsharp.Models.Common.Request;
+using Stubsharp.Models.EventSearch.Request;
+using Stubsharp.Models.EventSearch.Response;
+using Stubsharp.Models.InventorySearch.V1.Request;
+using Stubsharp.Models.InventorySearch.V1.Response;
 using Stubsharp.Utility;
 
 namespace Stubsharp
@@ -86,23 +90,33 @@ namespace Stubsharp
 
         public async Task<EventSearchResponse> SearchEvents(EventSearchRequest eventSearchRequest)
         {
-            if(eventSearchRequest == null)
-                throw new ArgumentNullException(nameof(eventSearchRequest));
-
-            if (StubhubEndpoint.EventSearch.RequiresAuthorization && !IsAuthenticated())
-                throw new InvalidOperationException($"{StubhubEndpoint.EventSearch.Name} requires authentication");
-
-            var client = HttpClientFactory.GetAuthenticatedClient(_environment, _authentication.AccessToken);
-            string endpoint = StubhubEndpoint.EventSearch.Url + "?" + eventSearchRequest.ToQueryString();
-
-            return await GetResult<EventSearchResponse>(endpoint, client);
+            return await InvokeEndpoint<EventSearchResponse>(StubhubEndpoint.EventSearchV3, eventSearchRequest);
         }
 
-        protected async Task<T> GetResult<T>(string resource, HttpClient client)
+        public async Task<InventorySearchResponseV1> SearchInventory(InventorySearchRequestV1 inventorySearchRequest)
+        {
+            return await InvokeEndpoint<InventorySearchResponseV1>(StubhubEndpoint.InventorySearchV1, inventorySearchRequest);
+        }
+
+        private async Task<T> InvokeEndpoint<T>(StubhubEndpoint endpoint, SearchRequestBase request)
+        {
+            if(request == null)
+                throw new ArgumentNullException(nameof(request));
+
+            if (endpoint.RequiresAuthorization && !IsAuthenticated())
+                throw new InvalidOperationException($"{endpoint.Name} requires authentication");
+
+            var client = HttpClientFactory.GetAuthenticatedClient(_environment, _authentication.AccessToken);
+            string uri = endpoint.Url + "?" + request.ToQueryString();
+
+            return await GetResult<T>(uri, client);
+        }
+
+        private async Task<T> GetResult<T>(string resource, HttpClient client)
         {
             var response = await client.GetAsync(resource).ConfigureAwait(false);
             string responseBody = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-            response.EnsureSuccessStatusCode();
+            //response.EnsureSuccessStatusCode();
             return JsonConvert.DeserializeObject<T>(responseBody);
         }
 

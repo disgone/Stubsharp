@@ -1,6 +1,7 @@
 using Newtonsoft.Json;
+using Stubsharp.Models.Common.Response;
 
-namespace Stubsharp.Models.EventSearch
+namespace Stubsharp.Models.EventSearch.Response
 {
     public class Venue : IHttpResource
     {

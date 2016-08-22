@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Net;
-using Stubsharp.Models.EventSearch;
+using Stubsharp.Models.EventSearch.Request;
 using Xunit;
 
 namespace Stubsharp.Tests.Models.EventSearch

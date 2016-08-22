@@ -1,17 +1,11 @@
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 
-namespace Stubsharp.Models.InventorySearch
+namespace Stubsharp.Models.InventorySearch.V1.Response
 {
-    public class PricingSummary
+    public abstract class Pricing
     {
-        [JsonProperty("name")]
-        public string Name { get; set; }
-
         [JsonProperty("minTicketPrice")]
         public float? MinTicketPrice { get; set; }
-
-        [JsonProperty("averageTicketPrice")]
-        public float? AverageTicketPrice { get; set; }
 
         [JsonProperty("maxTicketPrice")]
         public float? MaxTicketPrice { get; set; }
