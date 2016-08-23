@@ -3,7 +3,7 @@ using System.Net;
 using Stubsharp.Models.EventSearch.Request;
 using Xunit;
 
-namespace Stubsharp.Tests.Models.EventSearch
+namespace Stubsharp.Tests.Models.EventSearch.Request
 {
     public class EventSearchRequestTests
     {

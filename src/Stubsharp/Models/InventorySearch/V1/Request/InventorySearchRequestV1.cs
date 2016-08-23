@@ -1,6 +1,5 @@
 using System;
 using Stubsharp.Models.Common.Request;
-using Stubsharp.Models.EventSearch.Request;
 using Stubsharp.Utility;
 
 namespace Stubsharp.Models.InventorySearch.V1.Request
@@ -10,8 +9,7 @@ namespace Stubsharp.Models.InventorySearch.V1.Request
         public InventorySearchRequestV1(long eventId)
         {
             if (eventId <= 0)
-                throw new Exception("Invalid Event id");
-
+                throw new ArgumentException($"{nameof(eventId)} must be positive");
             EventId = eventId;
         }
 
@@ -81,11 +79,12 @@ namespace Stubsharp.Models.InventorySearch.V1.Request
         /// response.
         /// </summary>
         /// <value>The minimum price.</value>
-        public double? MinimumPrice
+        public decimal? MinimumPrice
         {
             get { return _priceMin; }
             set
             {
+                if (value <= 0) throw new ArgumentException($"{nameof(MinimumPrice)} must be non-negative");
                 _priceMin = value;
                 Params.SetOrRemove("priceMin", _priceMin.ToString());
             }
@@ -96,11 +95,12 @@ namespace Stubsharp.Models.InventorySearch.V1.Request
         /// response.
         /// </summary>
         /// <value>The maximum price.</value>
-        public double? MaximumPrice
+        public decimal? MaximumPrice
         {
             get { return _priceMax; }
             set
             {
+                if (value <= 0) throw new ArgumentException($"{nameof(MaximumPrice)} must be non-negative");
                 _priceMax = value;
                 Params.SetOrRemove("priceMax", _priceMax.ToString());
             }
@@ -166,8 +166,8 @@ namespace Stubsharp.Models.InventorySearch.V1.Request
         private uint? _rows;
         private uint? _start;
         private uint? _quantity;
-        private double? _priceMin;
-        private double? _priceMax;
+        private decimal? _priceMin;
+        private decimal? _priceMax;
         private bool? _sectionStats;
         private bool? _zoneStats;
         private bool? _pricingSummary;

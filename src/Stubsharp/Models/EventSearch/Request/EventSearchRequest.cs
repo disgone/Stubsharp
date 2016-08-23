@@ -1,6 +1,5 @@
 using System;
 using Stubsharp.Models.Common.Request;
-using Stubsharp.Models.InventorySearch.V2.Request;
 using Stubsharp.Utility;
 
 namespace Stubsharp.Models.EventSearch.Request
