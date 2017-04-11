@@ -9,8 +9,8 @@ using System.Threading.Tasks;
 using Stubsharp.Models.Common.Request;
 using Stubsharp.Models.EventSearch.Request;
 using Stubsharp.Models.EventSearch.Response;
-using Stubsharp.Models.InventorySearch.V2.Request;
-using Stubsharp.Models.InventorySearch.V2.Response;
+using Stubsharp.Models.InventorySearch.Request;
+using Stubsharp.Models.InventorySearch.Response;
 using Stubsharp.Utility;
 using Stubsharp.Utility.Serializers;
 

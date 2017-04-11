@@ -1,16 +1,17 @@
 using System;
 using Stubsharp.Models.Common.Request;
-using Stubsharp.Models.EventSearch.Request;
 using Stubsharp.Utility;
 
-namespace Stubsharp.Models.InventorySearch.V2.Request
+namespace Stubsharp.Models.InventorySearch.Request
 {
     public class InventorySearchRequest : SearchRequestBase
     {
         public InventorySearchRequest(long eventId)
         {
-            if (eventId <= 0)
-                throw new Exception("Invalid Event id");
+            if ( eventId <= 0 )
+            {
+                throw new ArgumentException("Invalid event id", nameof(eventId));
+            }
 
             EventId = eventId;
             Start = 0;
@@ -38,7 +39,7 @@ namespace Stubsharp.Models.InventorySearch.V2.Request
         /// Gets or sets the start index of the listings to return.
         /// </summary>
         /// <value>The start index.</value>
-        public uint Start
+        public uint? Start
         {
             get { return _start; }
             set
@@ -83,11 +84,12 @@ namespace Stubsharp.Models.InventorySearch.V2.Request
         /// response.
         /// </summary>
         /// <value>The minimum price.</value>
-        public double? MinimumPrice
+        public decimal? MinimumPrice
         {
             get { return _priceMin; }
             set
             {
+                if(value < 0) throw new ArgumentException($"{nameof(MinimumPrice)} must be a positive value");
                 _priceMin = value;
                 Params.SetOrRemove("priceMin", _priceMin.ToString());
             }
@@ -98,11 +100,12 @@ namespace Stubsharp.Models.InventorySearch.V2.Request
         /// response.
         /// </summary>
         /// <value>The maximum price.</value>
-        public double? MaximumPrice
+        public decimal? MaximumPrice
         {
             get { return _priceMax; }
             set
             {
+                if (value < 0) throw new ArgumentException($"{nameof(MaximumPrice)} must be a positive value");
                 _priceMax = value;
                 Params.SetOrRemove("priceMax", _priceMax.ToString());
             }
@@ -217,10 +220,10 @@ namespace Stubsharp.Models.InventorySearch.V2.Request
 
         private long _eventId;
         private uint? _rows;
-        private uint _start;
+        private uint? _start;
         private uint? _quantity;
-        private double? _priceMin;
-        private double? _priceMax;
+        private decimal? _priceMin;
+        private decimal? _priceMax;
         private bool? _sectionStats;
         private bool? _zoneStats;
         private bool? _pricingSummary;

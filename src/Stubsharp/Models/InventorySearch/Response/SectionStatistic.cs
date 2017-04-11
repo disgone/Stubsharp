@@ -1,6 +1,6 @@
 using Newtonsoft.Json;
 
-namespace Stubsharp.Models.InventorySearch.V2.Response
+namespace Stubsharp.Models.InventorySearch.Response
 {
     public class SectionStatistic
     {

@@ -1,9 +1,8 @@
 using Newtonsoft.Json;
 using Stubsharp.Models.Common.Response;
-using Stubsharp.Utility;
 using Stubsharp.Utility.Serializers;
 
-namespace Stubsharp.Models.InventorySearch.V2.Response
+namespace Stubsharp.Models.InventorySearch.Response
 {
     public class Listing
     {

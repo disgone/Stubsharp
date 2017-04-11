@@ -1,7 +1,7 @@
 using System;
 using Newtonsoft.Json;
 using Stubsharp.Models.Common.Request;
-using Stubsharp.Models.InventorySearch.V1.Request;
+using Stubsharp.Models.InventorySearch.Request;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -26,11 +26,11 @@ namespace Stubsharp.Tests.Client
                 Fixture.UsePreAuthorizationToken();
             }
 
-            var request = new InventorySearchRequestV1(9442860)
+            var request = new InventorySearchRequest(9442860)
             {
                 Rows = 5000,
             };
-            request.SortBy(InventorySearchSortKeyV1.CurrentPrice, SortDirection.Descending);
+            request.SortBy(InventorySearchSortKey.CurrentPrice, SortDirection.Descending);
 
             var result = await Fixture.Client.SearchInventory(request);
 
@@ -42,7 +42,7 @@ namespace Stubsharp.Tests.Client
         {
             Assert.False(Fixture.Client.IsAuthenticated());
 
-            var request = new InventorySearchRequestV1(9442860);
+            var request = new InventorySearchRequest(9442860);
 
             await Assert.ThrowsAsync<InvalidOperationException>(async () => await Fixture.Client.SearchInventory(request));
         }

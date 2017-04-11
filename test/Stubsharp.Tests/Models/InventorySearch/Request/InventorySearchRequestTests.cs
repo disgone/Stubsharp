@@ -1,24 +1,24 @@
 ﻿using System;
 using System.Net;
-using Stubsharp.Models.InventorySearch.V1.Request;
+using Stubsharp.Models.InventorySearch.Request;
 using Xunit;
 
-namespace Stubsharp.Tests.Models.InventorySearch.V1.Request
+namespace Stubsharp.Tests.Models.InventorySearch.Request
 {
-    public class InventorySearchRequestV1Tests
+    public class InventorySearchRequestTests
     {
         [Fact]
         public void Zero_Or_Negative_Event_Id_Throws_Exception()
         {
-            Assert.Throws<ArgumentException>(() => new InventorySearchRequestV1(0));
-            Assert.Throws<ArgumentException>(() => new InventorySearchRequestV1(-1));
+            Assert.Throws<ArgumentException>(() => new InventorySearchRequest(0));
+            Assert.Throws<ArgumentException>(() => new InventorySearchRequest(-1));
         }
 
         [Fact]
         public void Event_Id_Is_Included_In_QueryString()
         {
             long eventId = 12345;
-            var request = new InventorySearchRequestV1(eventId);
+            var request = new InventorySearchRequest(eventId);
 
             string queryString = request.ToQueryString();
             Assert.Contains("eventid=" + WebUtility.UrlEncode(eventId.ToString()), queryString, StringComparison.OrdinalIgnoreCase);
@@ -29,7 +29,7 @@ namespace Stubsharp.Tests.Models.InventorySearch.V1.Request
         {
             uint start = 25;
 
-            var request = new InventorySearchRequestV1(125)
+            var request = new InventorySearchRequest(125)
             {
                 Start = start
             };
@@ -38,7 +38,7 @@ namespace Stubsharp.Tests.Models.InventorySearch.V1.Request
             Assert.Contains("start=" + WebUtility.UrlEncode(start.ToString()), queryString, StringComparison.OrdinalIgnoreCase);
 
             start = 0;
-            request = new InventorySearchRequestV1(125)
+            request = new InventorySearchRequest(125)
             {
                 Start = start
             };
@@ -50,7 +50,7 @@ namespace Stubsharp.Tests.Models.InventorySearch.V1.Request
         [Fact]
         public void Start_Not_Included_In_QueryString_If_Null()
         {
-            var request = new InventorySearchRequestV1(125)
+            var request = new InventorySearchRequest(125)
             {
                 Start = null
             };
@@ -64,7 +64,7 @@ namespace Stubsharp.Tests.Models.InventorySearch.V1.Request
         {
             uint rows = 250;
 
-            var request = new InventorySearchRequestV1(125)
+            var request = new InventorySearchRequest(125)
             {
                 Rows = rows
             };
@@ -76,7 +76,7 @@ namespace Stubsharp.Tests.Models.InventorySearch.V1.Request
         [Fact]
         public void Rows_Is_Not_Included_In_QueryString_If_Null()
         {
-            var request = new InventorySearchRequestV1(125)
+            var request = new InventorySearchRequest(125)
             {
                 Rows = null
             };
@@ -90,7 +90,7 @@ namespace Stubsharp.Tests.Models.InventorySearch.V1.Request
         {
             uint quantity = 2;
 
-            var request = new InventorySearchRequestV1(125)
+            var request = new InventorySearchRequest(125)
             {
                 Quantity = quantity
             };
@@ -104,7 +104,7 @@ namespace Stubsharp.Tests.Models.InventorySearch.V1.Request
         {
             decimal price = 9.25m;
 
-            var request = new InventorySearchRequestV1(125)
+            var request = new InventorySearchRequest(125)
             {
                 MinimumPrice = price
             };
@@ -116,7 +116,7 @@ namespace Stubsharp.Tests.Models.InventorySearch.V1.Request
         [Fact]
         public void MinimumPrice_Throws_Exception_If_Given_Negative_Amount()
         {
-            Assert.Throws<ArgumentException>(() => new InventorySearchRequestV1(125) { MinimumPrice = -1.00m });
+            Assert.Throws<ArgumentException>(() => new InventorySearchRequest(125) { MinimumPrice = -1.00m });
         }
 
         [Fact]
@@ -124,7 +124,7 @@ namespace Stubsharp.Tests.Models.InventorySearch.V1.Request
         {
             decimal price = 9.25m;
 
-            var request = new InventorySearchRequestV1(125)
+            var request = new InventorySearchRequest(125)
             {
                 MaximumPrice = price
             };
@@ -136,13 +136,13 @@ namespace Stubsharp.Tests.Models.InventorySearch.V1.Request
         [Fact]
         public void MaximumPrice_Throws_Exception_If_Given_Negative_Amount()
         {
-            Assert.Throws<ArgumentException>(() => new InventorySearchRequestV1(125) { MaximumPrice = -1.00m });
+            Assert.Throws<ArgumentException>(() => new InventorySearchRequest(125) { MaximumPrice = -1.00m });
         }
 
         [Fact]
         public void IncludeSectionStats_Is_Included_In_QueryString()
         {
-            var request = new InventorySearchRequestV1(125)
+            var request = new InventorySearchRequest(125)
             {
                 IncludeSectionStats = true
             };
@@ -154,7 +154,7 @@ namespace Stubsharp.Tests.Models.InventorySearch.V1.Request
         [Fact]
         public void IncludeZoneStats_Is_Included_In_QueryString()
         {
-            var request = new InventorySearchRequestV1(125)
+            var request = new InventorySearchRequest(125)
             {
                 IncludeZoneStats = true
             };
@@ -166,7 +166,7 @@ namespace Stubsharp.Tests.Models.InventorySearch.V1.Request
         [Fact]
         public void IncludePricingSummary_Is_Included_In_QueryString()
         {
-            var request = new InventorySearchRequestV1(125)
+            var request = new InventorySearchRequest(125)
             {
                 IncludePricingSummary = true
             };

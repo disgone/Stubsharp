@@ -14,9 +14,13 @@ namespace Stubsharp.Utility
         public static void SetOrRemove(this Dictionary<string,string> collection, string key, string value)
         {
             if (string.IsNullOrWhiteSpace(value))
+            {
                 collection.Remove(key);
+            }
             else
-                collection.Add(key, value);
+            {
+                collection[key] = value;
+            }
         }
     }
 }
