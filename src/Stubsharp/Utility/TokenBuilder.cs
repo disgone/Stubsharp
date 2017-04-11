@@ -9,13 +9,20 @@ namespace Stubsharp.Utility
     {
         public static string CreateAuthorizationToken(string apiKey, string appSecret)
         {
-            if(apiKey == null)
+            if (apiKey == null)
+            {
                 throw new ArgumentNullException(nameof(apiKey));
+            }
+
             if (appSecret == null)
+            {
                 throw new ArgumentNullException(nameof(appSecret));
+            }
 
             var baseToken = $"{apiKey}:{appSecret}";
+
             byte[] encodedBaseToken = Encoding.ASCII.GetBytes(baseToken);
+
             return Convert.ToBase64String(encodedBaseToken);
         }
     }

@@ -1,8 +1,8 @@
-using System.Collections.Specialized;
+using System.Collections.Generic;
 
 namespace Stubsharp.Utility
 {
-    internal static class NameValueCollectionExtensions
+    internal static class CollectionExtensions
     {
         /// <summary>
         /// Sets the value in the collection if the string contains a value. If the value is blank
@@ -11,7 +11,7 @@ namespace Stubsharp.Utility
         /// <param name="collection">The name value collection</param>
         /// <param name="key">They collection key</param>
         /// <param name="value">The value</param>
-        public static void SetOrRemove(this NameValueCollection collection, string key, string value)
+        public static void SetOrRemove(this Dictionary<string,string> collection, string key, string value)
         {
             if (string.IsNullOrWhiteSpace(value))
                 collection.Remove(key);

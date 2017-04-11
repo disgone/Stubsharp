@@ -2,7 +2,7 @@
 using System.Reflection;
 using Newtonsoft.Json;
 
-namespace Stubsharp.Utility
+namespace Stubsharp.Utility.Serializers
 {
     public class BooleanJsonConverter : JsonConverter
     {

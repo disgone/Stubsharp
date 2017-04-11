@@ -11,7 +11,7 @@ namespace Stubsharp.Models.EventSearch.Request
         {
             get
             {
-                return Params.Get("q");
+                return Params["q"];
             }
             set
             {
@@ -35,7 +35,7 @@ namespace Stubsharp.Models.EventSearch.Request
         {
             get
             {
-                return Params.Get("city");
+                return Params["city"];
             }
             set
             {
@@ -47,7 +47,7 @@ namespace Stubsharp.Models.EventSearch.Request
         {
             get
             {
-                return Params.Get("state");
+                return Params["state"];
             }
             set
             {
@@ -59,7 +59,7 @@ namespace Stubsharp.Models.EventSearch.Request
         {
             get
             {
-                return Params.Get("country");
+                return Params["country"];
             }
             set
             {
@@ -71,7 +71,7 @@ namespace Stubsharp.Models.EventSearch.Request
         {
             get
             {
-                return Params.Get("postalcode");
+                return Params["postalcode"];
             }
             set
             {

@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Linq;
 using System.Net;
 
@@ -8,12 +7,12 @@ namespace Stubsharp.Models.Common.Request
 {
     public abstract class SearchRequestBase
     {
-        protected NameValueCollection Params;
+        protected Dictionary<string,string> Params;
         protected List<Tuple<ISearchSortKey, SortDirection>> Sort;
 
         protected SearchRequestBase()
         {
-            Params = new NameValueCollection();
+            Params = new Dictionary<string, string>();
             Sort = new List<Tuple<ISearchSortKey, SortDirection>>();
         }
 
@@ -31,7 +30,7 @@ namespace Stubsharp.Models.Common.Request
 
         public string ToQueryString()
         {
-            string queryString =  string.Join("&", Params.AllKeys.Select(p => $"{p}={WebUtility.UrlEncode(Params[p])}"));
+            string queryString =  string.Join("&", Params.Keys.Select(p => $"{p}={WebUtility.UrlEncode(Params[p])}"));
 
             for (var i = 0; i < Sort.Count; i++)
             {

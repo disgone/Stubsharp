@@ -1,8 +1,8 @@
 ﻿using Newtonsoft.Json;
 
-namespace Stubsharp.Models.InventorySearch.V1.Response
+namespace Stubsharp.Models.InventorySearch.V2.Response
 {
-    public class InventorySearchResponseV1
+    public class InventorySearchResponse
     {
         [JsonProperty("eventId")]
         public int EventId { get; set; }
@@ -25,11 +25,8 @@ namespace Stubsharp.Models.InventorySearch.V1.Response
         [JsonProperty("section_stats")]
         public SectionStatistic[] SectionStatistics { get; set; }
 
-        [JsonProperty("zone_stats")]
-        public ZoneStatistic[] ZoneStatistics { get; set; }
-
         [JsonProperty("pricingSummary")]
-        public V2.Response.PricingSummary PricingSummary { get; set; }
+        public PricingSummary PricingSummary { get; set; }
 
         [JsonProperty("start")]
         public int Start { get; set; }

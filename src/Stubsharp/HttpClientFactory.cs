@@ -13,7 +13,7 @@ namespace Stubsharp
         /// <returns></returns>
         public HttpClient GetClient(StubhubEnvironment environment)
         {
-            return _basicClient ?? (_basicClient = CreateClientInstance(environment));
+            return _basicClient ?? (_basicClient = CreateInstance(environment));
         }
 
         /// <summary>
@@ -29,7 +29,7 @@ namespace Stubsharp
             if (string.IsNullOrWhiteSpace(authenticationToken))
                 throw new ArgumentException("Invalid authentication token", nameof(authenticationToken));
 
-            _authedClient = CreateClientInstance(environment);
+            _authedClient = CreateInstance(environment);
             _authedClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authenticationToken);
             return _authedClient;
         }
@@ -40,7 +40,7 @@ namespace Stubsharp
             GC.SuppressFinalize(this);
         }
 
-        protected HttpClient CreateClientInstance(StubhubEnvironment environment)
+        protected HttpClient CreateInstance(StubhubEnvironment environment)
         {
             var baseUri = new Uri($"https://{environment.Domain}/");
 
@@ -65,8 +65,9 @@ namespace Stubsharp
         }
 
         private static HttpClient _basicClient;
+
         private static HttpClient _authedClient;
+
         private bool _disposed;
-        
     }
 }
