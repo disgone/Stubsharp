@@ -2,6 +2,10 @@ using System;
 
 namespace Stubsharp
 {
+    /// <summary>
+    /// StubHub provides two environments for developers, production and a sandbox.
+    /// This class represents the configuration information needed for both environments.
+    /// </summary>
     public class StubHubEnvironment
     {
         /// <summary>
@@ -20,7 +24,16 @@ namespace Stubsharp
             BaseUri = baseUri;
         }
 
+        /// <summary>
+        /// Gets name of the scope for the environment
+        /// </summary>
+        /// <value>The scope.</value>
         public string Scope { get; }
+
+        /// <summary>
+        /// Gets the base URI for the environment.
+        /// </summary>
+        /// <value>The base URI.</value>
         public Uri BaseUri { get; }
     }
 }

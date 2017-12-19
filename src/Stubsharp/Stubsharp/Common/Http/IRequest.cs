@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Net.Http;
 
@@ -37,7 +37,7 @@ namespace Stubsharp.Common.Http
         /// Gets or sets the endpoint of the request
         /// </summary>
         /// <value>The endpoint.</value>
-        string Endpoint { get; }
+        Uri Endpoint { get; }
 
         /// <summary>
         /// Gets or sets the type of the content.

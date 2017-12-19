@@ -13,10 +13,18 @@
     <FileVersion>0.0.1.0</FileVersion>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <LangVersion>7.2</LangVersion>
+  </PropertyGroup>
+
   <ItemGroup>
-    <Folder Include="Authentication\" />
-    <Folder Include="Models\Response\" />
+    <Folder Include="Common\Serialization\" />
     <Folder Include="Models\Request\" />
+    <Folder Include="Models\Response\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
   </ItemGroup>
 
 </Project>

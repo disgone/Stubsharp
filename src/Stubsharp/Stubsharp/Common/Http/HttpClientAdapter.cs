@@ -5,10 +5,9 @@ using System.Net.Http;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Stubsharp.Common.Http;
 using Stubsharp.Common.Infrastructure;
 
-namespace Stubsharp
+namespace Stubsharp.Common.Http
 {
     public class HttpClientAdapter : IHttpClient
     {
@@ -39,8 +38,13 @@ namespace Stubsharp
             }
         }
 
+        /// <summary>
+        /// Sends the request and returns the raw <see cref="HttpResponseMessage"/>
+        /// </summary>
+        /// <param name="request">The HTTP request.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
         public Task<HttpResponseMessage> SendRequest(HttpRequestMessage request,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
             return _http.SendAsync(request, HttpCompletionOption.ResponseContentRead, cancellationToken);
         }
@@ -95,11 +99,12 @@ namespace Stubsharp
         /// <param name="cancellationToken">The cancellation token</param>
         /// <returns>Task&lt;IResponse&gt;.</returns>
         protected virtual async Task<IResponse> GenerateResponse(HttpResponseMessage response, 
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
             Guard.IsNotNull(response, nameof(response));
 
             string body = null;
+            string contentType = null;
 
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -107,6 +112,8 @@ namespace Stubsharp
             {
                 if ( content != null )
                 {
+                    contentType = GetContentMediaType(content);
+
                     body = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
                 }
             }
@@ -114,7 +121,13 @@ namespace Stubsharp
             return new Response(
                 response.StatusCode,
                 body,
-                response.Headers.ToDictionary(k => k.Key, v => v.Value.First()));
+                response.Headers.ToDictionary(k => k.Key, v => v.Value.First()),
+                contentType);
+        }
+
+        private static string GetContentMediaType(HttpContent httpContent)
+        {
+            return httpContent.Headers?.ContentType?.MediaType;
         }
 
         /// <summary>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.</summary>

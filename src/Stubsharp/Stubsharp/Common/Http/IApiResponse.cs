@@ -1,4 +1,7 @@
-﻿namespace Stubsharp.Common.Http
+using System.Threading.Tasks;
+using Stubsharp.Common.Infrastructure;
+
+namespace Stubsharp.Common.Http
 {
     /// <summary>
     /// A generic API response
