@@ -26,6 +26,12 @@ namespace Stubsharp.Common.Http
         StubHubEnvironment Environment { get; }
 
         /// <summary>
+        /// Gets the client settings.
+        /// </summary>
+        /// <value>The client settings.</value>
+        ClientSettings ClientSettings { get; }
+
+        /// <summary>
         /// Issues a HTTP GET request to the provided uri.
         /// </summary>
         /// <typeparam name="T">The expected response type</typeparam>
@@ -57,8 +63,28 @@ namespace Stubsharp.Common.Http
         /// <typeparam name="T">The expected response type</typeparam>
         /// <param name="uri">The URI of the endpoint to issue the request.</param>
         /// <param name="body">The object to be sent as the body of the request</param>
+        /// <param name="cancellationToken">The cancellation token</param>
+        Task<IApiResponse<T>> Post<T>(Uri uri, object body, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Issues a HTTP POST request to the provided uri.
+        /// </summary>
+        /// <typeparam name="T">The expected response type</typeparam>
+        /// <param name="uri">The URI of the endpoint to issue the request.</param>
+        /// <param name="body">The object to be sent as the body of the request</param>
         /// <param name="accepts">The accepted media type</param>
         /// <param name="cancellationToken">The cancellation token</param>
         Task<IApiResponse<T>> Post<T>(Uri uri, object body, string accepts, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Issues a HTTP POST request to the provided uri.
+        /// </summary>
+        /// <typeparam name="T">The expected response type</typeparam>
+        /// <param name="uri">The URI of the endpoint to issue the request.</param>
+        /// <param name="body">The object to be sent as the body of the request</param>
+        /// <param name="accepts">The accepted media type</param>
+        /// <param name="authentication">The authentication to use for the request</param>
+        /// <param name="cancellationToken">The cancellation token</param>
+        Task<IApiResponse<T>> Post<T>(Uri uri, object body, string accepts, IAuthenticationProvider authentication, CancellationToken cancellationToken = default);
     }
 }

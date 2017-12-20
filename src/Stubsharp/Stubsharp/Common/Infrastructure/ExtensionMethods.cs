@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -130,6 +131,45 @@ namespace Stubsharp.Common.Infrastructure
             };
 
             return uriBuilder.Uri;
+        }
+
+        /// <summary>
+        /// Syntactic sugar for creating a TimeSpan of n seconds
+        /// </summary>
+        /// <param name="seconds">The # of seconds.</param>
+        /// <returns>TimeSpan.</returns>
+        public static TimeSpan Seconds(this int seconds) =>
+            new TimeSpan(TimeSpan.TicksPerSecond * seconds);
+
+        /// <summary>
+        /// Syntactic sugar for creating a TimeSpan of n minutes
+        /// </summary>
+        /// <param name="minutes">The # of minutes.</param>
+        /// <returns>TimeSpan.</returns>
+        public static TimeSpan Minutes(this int minutes) =>
+            new TimeSpan(TimeSpan.TicksPerMinute * minutes);
+
+        /// <summary>
+        /// Syntactic sugar for creating a TimeSpan of n hours
+        /// </summary>
+        /// <param name="hours">The # of hours.</param>
+        /// <returns>TimeSpan.</returns>
+        public static TimeSpan Hours(this int hours) =>
+            new TimeSpan(TimeSpan.TicksPerHour * hours);
+
+        /// <summary>
+        /// Syntactic sugar for creating a TimeSpan of n days
+        /// </summary>
+        /// <param name="days">The # of days.</param>
+        /// <returns>TimeSpan.</returns>
+        public static TimeSpan Days(this int days) =>
+            new TimeSpan(TimeSpan.TicksPerDay * days);
+
+        public static Uri FormatUri(this string pattern, params object[] args)
+        {
+            Guard.IsNotNullOrEmpty(pattern, "pattern");
+
+            return new Uri(string.Format(CultureInfo.InvariantCulture, pattern, args), UriKind.Relative);
         }
     }
 }

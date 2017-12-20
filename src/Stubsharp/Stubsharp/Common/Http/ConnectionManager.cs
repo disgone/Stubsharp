@@ -14,25 +14,24 @@ namespace Stubsharp.Common.Http
 {
     public class ConnectionManager : IConnectionManager
     {
-        private ClientPackageHeader _package;
         private readonly IHttpClient _httpClient;
         private readonly ISerializer _serializer;
         private readonly AuthenticationProvider _authentication;
 
-        public ConnectionManager(ClientPackageHeader package, StubHubEnvironment environment)
+        public ConnectionManager(ClientSettings package, StubHubEnvironment environment)
             : this(package, environment, new InMemoryCredentialProvider(Credentials.Anonymous), new HttpClientAdapter(DefaultHandlerFactory.Create), new JsonNetSerializer())
         {
         }
 
         public ConnectionManager(
-            ClientPackageHeader package, 
+            ClientSettings package, 
             StubHubEnvironment environment,
             ICredentialProvider credentialProvider)
             : this(package, environment, credentialProvider, new HttpClientAdapter(DefaultHandlerFactory.Create), new JsonNetSerializer())
         {
         }
 
-        public ConnectionManager(ClientPackageHeader package, 
+        public ConnectionManager(ClientSettings package, 
             StubHubEnvironment environment,
             ICredentialProvider credentialProvider,
             IHttpClient httpClient,
@@ -45,10 +44,10 @@ namespace Stubsharp.Common.Http
             Guard.IsNotNull(serializer, nameof(serializer));
 
             BaseAddress = environment.BaseUri;
+            ClientSettings = package;
             UserAgent = GetUserAgent(package);
             Environment = environment;
 
-            _package = package;
             _httpClient = httpClient;
             _authentication = new AuthenticationProvider(credentialProvider);
             _serializer = serializer;
@@ -77,6 +76,12 @@ namespace Stubsharp.Common.Http
         /// </summary>
         /// <value>The environment.</value>
         public StubHubEnvironment Environment { get; }
+
+        /// <summary>
+        /// Gets the client settings.
+        /// </summary>
+        /// <value>The client settings.</value>
+        public ClientSettings ClientSettings { get; }
 
         /// <summary>
         /// The connections used for the connection
@@ -128,7 +133,7 @@ namespace Stubsharp.Common.Http
 
             var uriData = uri.ApplyParameters(parameters);
 
-            return Send<T>(uriData, HttpMethod.Get, null, accepts, cancellationToken);
+            return Send<T>(uriData, HttpMethod.Get, null, accepts, _authentication, cancellationToken);
         }
 
         /// <summary>
@@ -148,17 +153,44 @@ namespace Stubsharp.Common.Http
         /// <typeparam name="T">The expected response type</typeparam>
         /// <param name="uri">The URI of the endpoint to issue the request.</param>
         /// <param name="body">The object to be sent as the body of the request</param>
+        /// <param name="cancellationToken">The cancellation token</param>
+        public Task<IApiResponse<T>> Post<T>(Uri uri, object body, CancellationToken cancellationToken = default)
+        {
+            return Post<T>(uri, body, "application/json", _authentication, cancellationToken);
+        }
+
+        /// <summary>
+        /// Issues a HTTP POST request to the provided uri.
+        /// </summary>
+        /// <typeparam name="T">The expected response type</typeparam>
+        /// <param name="uri">The URI of the endpoint to issue the request.</param>
+        /// <param name="body">The object to be sent as the body of the request</param>
         /// <param name="accepts">The accepted media types</param>
         /// <param name="cancellationToken">The cancellation token</param>
         public Task<IApiResponse<T>> Post<T>(Uri uri, object body, string accepts, CancellationToken cancellationToken = default)
         {
-            Guard.IsNotNull(uri, nameof(uri));
-
-            return Send<T>(uri, HttpMethod.Post, body, accepts, cancellationToken);
+            return Post<T>(uri, body, accepts, _authentication, cancellationToken);
         }
 
-        private Task<IApiResponse<T>> Send<T>(Uri uri, HttpMethod method, object body, string accepts = null,
-            CancellationToken cancellationToken = default)
+        /// <summary>
+        /// Issues a HTTP POST request to the provided uri.
+        /// </summary>
+        /// <remarks>This overload exists so we can issue the request and renewal for access tokens</remarks>
+        /// <typeparam name="T">The expected response type</typeparam>
+        /// <param name="uri">The URI of the endpoint to issue the request.</param>
+        /// <param name="body">The object to be sent as the body of the request</param>
+        /// <param name="accepts">The accepted media types</param>
+        /// <param name="authentication">The authentication to use with this request</param>
+        /// <param name="cancellationToken">The cancellation token</param>
+        public Task<IApiResponse<T>> Post<T>(Uri uri, object body, string accepts, IAuthenticationProvider authentication, CancellationToken cancellationToken = default)
+        {
+            Guard.IsNotNull(uri, nameof(uri));
+
+            return Send<T>(uri, HttpMethod.Post, body, accepts, authentication, cancellationToken);
+        }
+
+        private Task<IApiResponse<T>> Send<T>(Uri uri, HttpMethod method, object body, string accepts = "application/json",
+            IAuthenticationProvider authentication = null, CancellationToken cancellationToken = default)
         {
             Guard.IsNotNull(uri, nameof(uri));
 
@@ -175,50 +207,53 @@ namespace Stubsharp.Common.Http
             }
 
             request.Headers["Accept"] = accepts;
-            request.Headers["Accept-Encoding"] = accepts;
 
-            if ( body != null )
+            if ( body == null )
             {
-                request.Body = body;
-                request.ContentType = "application/x-www-form-urlencoded";
+                return Execute<T>(request, authentication, cancellationToken);
             }
 
-            return Execute<T>(request, cancellationToken);
+            request.Body = body;
+            request.ContentType = "application/x-www-form-urlencoded";
+
+            return Execute<T>(request, authentication, cancellationToken);
         }
 
-        private async Task<IApiResponse<T>> Execute<T>(IRequest request, CancellationToken cancellationToken = default)
+        private async Task<IApiResponse<T>> Execute<T>(IRequest request, IAuthenticationProvider authentication, CancellationToken cancellationToken = default)
         {
             PrepareRequestContent(request);
-            var response = await Execute(request, cancellationToken).ConfigureAwait(false);
+            var response = await Execute(request, authentication, cancellationToken).ConfigureAwait(false);
             return DeserializeResponse<T>(response);
         }
 
         /// <summary>
-        /// Executes the specified request. All requests should be run through this endpoint.
+        /// Executes the specified request. All requests should ultimately be run through this endpoint.
         /// </summary>
         /// <param name="request">The request.</param>
+        /// <param name="authentication">The authentication provider for this request</param>
         /// <param name="cancellationToken">The cancellation.</param>
         /// <returns>System.Threading.Tasks.Task&lt;Stubsharp.Common.Http.IResponse&gt;.</returns>
-        private async Task<IResponse> Execute(IRequest request, CancellationToken cancellationToken = default)
+        private async Task<IResponse> Execute(IRequest request, IAuthenticationProvider authentication, CancellationToken cancellationToken = default)
         {
             request.Headers.Add("User-Agent", UserAgent);
-            await _authentication.Apply(request).ConfigureAwait(false);
-
-            var response = await _httpClient.Send(request, cancellationToken).ConfigureAwait(false);
-
-            return response;
+            await authentication.Apply(request).ConfigureAwait(false);
+            return await _httpClient.Send(request, cancellationToken).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Prepares the content of the request.
+        /// </summary>
+        /// <param name="request">The request.</param>
         private void PrepareRequestContent(IRequest request)
         {
             Guard.IsNotNull(request, nameof(request));
 
-            if ( request.Method == HttpMethod.Get || request.Body == null )
+            if (request.Method == HttpMethod.Get || request.Body == null)
             {
                 return;
             }
 
-            if ( request.Body is string || request.Body is Stream || request.Body is HttpContent )
+            if (request.Body is string || request.Body is Stream || request.Body is HttpContent)
             {
                 return;
             }
@@ -226,12 +261,18 @@ namespace Stubsharp.Common.Http
             request.Body = _serializer.Serialize(request.Body);
         }
 
+        /// <summary>
+        /// Deserialize the response.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="response">The response.</param>
+        /// <returns>Stubsharp.Common.Http.IApiResponse&lt;T&gt;.</returns>
         private IApiResponse<T> DeserializeResponse<T>(IResponse response)
         {
             Guard.IsNotNull(response, nameof(response));
 
-            if ( response.ContentType != null &&
-                 response.ContentType.Equals("application/json", StringComparison.Ordinal) )
+            if (response.ContentType != null &&
+                 response.ContentType.Equals("application/json", StringComparison.Ordinal))
             {
                 var body = response.Body as string;
                 var content = _serializer.Deserialize<T>(body);
@@ -241,7 +282,7 @@ namespace Stubsharp.Common.Http
             return new ApiResponse<T>(response);
         }
 
-        internal static string GetUserAgent(ClientPackageHeader package)
+        internal static string GetUserAgent(ClientSettings package)
         {
             return $"{package} ({GetPlatformInformation()}; {GetCultureInformation()}; Stubsharp {GetVersionInformation()})";
         }

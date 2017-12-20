@@ -1,3 +1,4 @@
+using Stubsharp.Clients.Authorization;
 using Stubsharp.Common.Http;
 using Stubsharp.Common.Infrastructure;
 
@@ -5,20 +6,20 @@ namespace Stubsharp
 {
     public class StubsharpClient
     {
-        public StubsharpClient(ClientPackageHeader package)
+        public StubsharpClient(ClientSettings package)
             : this(new ConnectionManager(package, StubHubEnvironment.Production))
         {
         }
 
         public StubsharpClient(
-            ClientPackageHeader package, 
+            ClientSettings package, 
             StubHubEnvironment environment)
             : this(new ConnectionManager(package, environment))
         {
         }
 
         public StubsharpClient(
-            ClientPackageHeader package, 
+            ClientSettings package, 
             StubHubEnvironment environment,
             ICredentialProvider credentials)
             : this(new ConnectionManager(package, environment, credentials))
@@ -30,6 +31,8 @@ namespace Stubsharp
             Guard.IsNotNull(connectionManager, nameof(connectionManager));
 
             Connection = connectionManager;
+
+            Authorization = new AuthorizationClient(Connection);
         }
 
         /// <summary>
@@ -52,5 +55,7 @@ namespace Stubsharp
         /// </summary>
         /// <value>The environment.</value>
         public StubHubEnvironment Environment => Connection.Environment;
+
+        public IAuthorizationClient Authorization { get; private set; }
     }
 }

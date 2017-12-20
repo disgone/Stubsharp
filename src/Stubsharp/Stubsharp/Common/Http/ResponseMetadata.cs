@@ -14,7 +14,7 @@ namespace Stubsharp.Common.Http
         }
 
         [Metadata(MetadataProperty = "X-StubHub-User-GUID")]
-        public string UserId { get; }
+        public string UserId { get; private set; }
     }
 
     
