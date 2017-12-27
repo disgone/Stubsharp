@@ -1,4 +1,3 @@
-using System.Threading.Tasks;
 using Stubsharp.Common.Http;
 using Xunit;
 

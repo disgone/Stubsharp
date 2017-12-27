@@ -63,5 +63,10 @@ namespace Stubsharp
         /// Gets the applications consumer secret.
         /// </summary>
         public string ConsumerSecret { get; }
+
+        public override string ToString()
+        {
+            return _header.ToString();
+        }
     }
 }

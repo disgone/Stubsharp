@@ -89,7 +89,7 @@ namespace Stubsharp.Common.Infrastructure
             var queryStartNdx = uri.OriginalString.IndexOf("?", StringComparison.Ordinal);
             var hasQueryString = queryStartNdx >= 0;
 
-            string baseUrl = hasQueryString ? uri.ToString() : uri.OriginalString.Substring(0, queryStartNdx);
+            string baseUrl = hasQueryString ? uri.OriginalString.Substring(0, queryStartNdx) : uri.ToString();
 
             string queryString;
             if (uri.IsAbsoluteUri)
@@ -98,7 +98,7 @@ namespace Stubsharp.Common.Infrastructure
             }
             else
             {
-                queryString = hasQueryString ? "" : uri.OriginalString.Substring(queryStartNdx);
+                queryString = hasQueryString ? uri.OriginalString.Substring(queryStartNdx) : string.Empty;
             }
 
             var values = queryString.Replace("?", "")

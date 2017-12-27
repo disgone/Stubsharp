@@ -1,4 +1,5 @@
 using Stubsharp.Clients.Authorization;
+using Stubsharp.Clients.Events;
 using Stubsharp.Common.Http;
 using Stubsharp.Common.Infrastructure;
 
@@ -33,6 +34,7 @@ namespace Stubsharp
             Connection = connectionManager;
 
             Authorization = new AuthorizationClient(Connection);
+            Events = new EventsClient(Connection);
         }
 
         /// <summary>
@@ -57,5 +59,7 @@ namespace Stubsharp
         public StubHubEnvironment Environment => Connection.Environment;
 
         public IAuthorizationClient Authorization { get; private set; }
+
+        public EventsClient Events { get; private set; }
     }
 }

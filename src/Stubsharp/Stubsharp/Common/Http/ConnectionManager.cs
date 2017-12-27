@@ -24,14 +24,14 @@ namespace Stubsharp.Common.Http
         }
 
         public ConnectionManager(
-            ClientSettings package, 
+            ClientSettings package,
             StubHubEnvironment environment,
             ICredentialProvider credentialProvider)
             : this(package, environment, credentialProvider, new HttpClientAdapter(DefaultHandlerFactory.Create), new JsonNetSerializer())
         {
         }
 
-        public ConnectionManager(ClientSettings package, 
+        public ConnectionManager(ClientSettings package,
             StubHubEnvironment environment,
             ICredentialProvider credentialProvider,
             IHttpClient httpClient,
