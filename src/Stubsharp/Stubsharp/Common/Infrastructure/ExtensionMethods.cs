@@ -52,22 +52,18 @@ namespace Stubsharp.Common.Infrastructure
         }
 
         /// <summary>
-        /// Sets the value in the collection if the string contains a value. If the value is blank
-        /// or null, then the key will be removed from the collection.
+        /// Replaces one or more format items in a string and returns the result as a URI.
         /// </summary>
-        /// <param name="collection">The name value collection</param>
-        /// <param name="key">They collection key</param>
-        /// <param name="value">The value</param>
-        public static void SetOrUpdate(this IDictionary<string,string> collection, string key, string value)
+        /// <param name="pattern">The uri pattern</param>
+        /// <param name="args">The pattern arguments</param>
+        /// <exception cref="ArgumentException"></exception>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="UriFormatException"></exception>
+        public static Uri FormatUri(this string pattern, params object[] args)
         {
-            if ( !value.HasValue() )
-            {
-                collection.Remove(key);
-            }
-            else
-            {
-                collection.Add(key, value);
-            }
+            Guard.IsNotNullOrEmpty(pattern, "pattern");
+
+            return new Uri(string.Format(CultureInfo.InvariantCulture, pattern, args), UriKind.Relative);
         }
 
         /// <summary>
@@ -81,28 +77,14 @@ namespace Stubsharp.Common.Infrastructure
         {
             Guard.IsNotNull(uri, "uri");
 
-            if (parameters == null || !parameters.Any())
+            if (parameters == null || parameters.Count == 0)
             {
                 return uri;
             }
 
-            var queryStartNdx = uri.OriginalString.IndexOf("?", StringComparison.Ordinal);
-            var hasQueryString = queryStartNdx >= 0;
+            var (baseUrl, queryParameters) = SplitUri(uri);
 
-            string baseUrl = hasQueryString ? uri.OriginalString.Substring(0, queryStartNdx) : uri.ToString();
-
-            string queryString;
-            if (uri.IsAbsoluteUri)
-            {
-                queryString = uri.Query;
-            }
-            else
-            {
-                queryString = hasQueryString ? uri.OriginalString.Substring(queryStartNdx) : string.Empty;
-            }
-
-            var values = queryString.Replace("?", "")
-                                    .Split(new[] { '&' }, StringSplitOptions.RemoveEmptyEntries);
+            var values = queryParameters.Split(new[] { '&', '?' }, StringSplitOptions.RemoveEmptyEntries);
 
             var existingParameters = values.ToDictionary(
                 key => key.Substring(0, key.IndexOf('=')),
@@ -116,21 +98,59 @@ namespace Stubsharp.Common.Infrastructure
                 p.SetOrUpdate(parameter.Key, parameter.Value);
             }
 
-            string MapValueFunc(string key, string value) => key == "q" ? value : Uri.EscapeDataString(value);
+            var query = string.Join("&", p.Select(kvp => kvp.Key + "=" + Uri.EscapeDataString(kvp.Value)));
 
-            var query = string.Join("&", p.Select(kvp => kvp.Key + "=" + MapValueFunc(kvp.Key, kvp.Value)));
-
-            if ( !uri.IsAbsoluteUri )
+            if (uri.IsAbsoluteUri)
             {
-                return new Uri(baseUrl + "?" + query, UriKind.Relative);
+                return new UriBuilder(uri)
+                {
+                    Query = query
+                }.Uri;
             }
 
-            var uriBuilder = new UriBuilder(uri)
-            {
-                Query = query
-            };
+            return new Uri(baseUrl + "?" + query, UriKind.Relative);
+        }
 
-            return uriBuilder.Uri;
+        public static Uri RemoveParameter(this Uri uri, string key)
+            => ApplyParameters(uri, new Dictionary<string, string> {{key, null}});
+
+        /// <summary>
+        /// Splits a uri into two parts, the base url and the query parameters
+        /// </summary>
+        /// <example>
+        /// https://www.example.com/list?filter=value will return
+        /// {
+        ///     baseUrl: "https://www.example.com/list",
+        ///     queryParameters: "?filter=value"
+        /// }
+        /// </example>
+        /// <param name="uri">The uri to split</param>
+        private static (string baseUrl, string queryParameters) SplitUri(Uri uri)
+        {
+            var parts = uri.OriginalString.Split(new[] {'?'}, StringSplitOptions.None);
+
+            var q = parts.Length > 1 ? parts[1] : "";
+
+            return (parts[0], q);
+        }
+
+        /// <summary>
+        /// Sets the value in the collection if the string contains a value. If the value is null, then 
+        /// the key will be removed from the collection.
+        /// </summary>
+        /// <param name="collection">The name value collection</param>
+        /// <param name="key">They collection key</param>
+        /// <param name="value">The value</param>
+        public static void SetOrUpdate(this IDictionary<string, string> collection, string key, string value)
+        {
+            if (value == null)
+            {
+                collection.Remove(key);
+            }
+            else
+            {
+                collection[key] = value;
+            }
         }
 
         /// <summary>
@@ -164,12 +184,5 @@ namespace Stubsharp.Common.Infrastructure
         /// <returns>TimeSpan.</returns>
         public static TimeSpan Days(this int days) =>
             new TimeSpan(TimeSpan.TicksPerDay * days);
-
-        public static Uri FormatUri(this string pattern, params object[] args)
-        {
-            Guard.IsNotNullOrEmpty(pattern, "pattern");
-
-            return new Uri(string.Format(CultureInfo.InvariantCulture, pattern, args), UriKind.Relative);
-        }
     }
 }
